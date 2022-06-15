@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+from ase import io
+from ase.io import espresso
+from numpy.linalg import norm
+import sys
+
+if len(sys.argv) == 1:
+    print('usage: suggest_kpoints filename.in N')
+    quit()
+
+input_file = sys.argv[1]
+Rk = int(sys.argv[2])
+
+#https://www.vasp.at/wiki/index.php/KPOINTS
+# Useful values for the length vary between Rk=10 (large gap insulators) and 100 (d-metals). 
+
+
+atoms = espresso.read_espresso_in(input_file)
+
+print('cell:', atoms.cell)
+b1, b2, b3 = atoms.cell.reciprocal()
+
+b1_norm = norm(b1)
+b2_norm = norm(b2)
+b3_norm = norm(b3)
+
+N1 = int(max(1, b1_norm*Rk + 0.5))
+N2 = int(max(1, b1_norm*Rk + 0.5))
+N3 = int(max(1, b1_norm*Rk + 0.5))
+
+print(N1, N2, N3)
